@@ -1,0 +1,24 @@
+{
+    "name": "Spotify Release Finder Enhancer",
+    "version": "0.0.1",
+    "description": "Enhance Every Noise Release Finder",
+    "manifest_version": 3,
+    "author": "Igor Mitryakov",
+    "action":{
+        "default_title": "Spotify Release Finder Enhancer",
+        "default_popup": "index.html"
+    },
+    "background": {
+      "service_worker": "service-worker.js"
+    },
+    "content_scripts": [
+      {
+        "matches": ["https://everynoise.com/*"],
+        "js": ["index.js"]
+      }
+    ],
+    "host_permissions": [
+        "https://everynoise.com/*"
+    ],
+    "permissions": ["activeTab", "scripting"]
+}
