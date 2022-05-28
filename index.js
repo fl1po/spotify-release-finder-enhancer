@@ -1,4 +1,15 @@
-var excludedArtists = ['Songfinch'];
+function getData() {
+    var storageKey = 'exclusions';
+    var storageData = JSON.parse(localStorage.getItem(storageKey));
+    if (!storageData) {
+        localStorage.setItem(storageKey, JSON.stringify({
+            artists: [],
+            genres: [],
+        }));
+    }
+    var { artists, genres } = storageData;
+    return { artists, genres, storageData };
+}
 
 var genres = document.getElementsByClassName('genrename');
 var artistTags = [...document.getElementsByTagName("b")];
@@ -8,11 +19,18 @@ function removeNodes(nodes) {
 }
 
 function excludeArtist(artist) {
+    const { storageData, artists } = getData();
+    const newData = {
+        ...storageData,
+        artists: [...artists, artist]
+    };
+    localStorage.setItem(storageKey, JSON.stringify(newData));
     removeNodes(artistTags.filter((tag) => tag.innerText === artist));
 }
 
 function excludeArtists() {
-    removeNodes(artistTags.filter((tag) => excludedArtists.includes(tag.innerText)));
+    const { artists } = getData();
+    removeNodes(artistTags.filter((tag) => artists.includes(tag.innerText)));
 }
 
 function appendRemoveNode(tag, className) {
