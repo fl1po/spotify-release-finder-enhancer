@@ -18,6 +18,10 @@ function removeNodes(nodes) {
     nodes.forEach((tag) => tag.parentElement.parentElement.style.display = 'none');
 }
 
+function returnNodes(nodes) {
+    nodes.forEach((tag) => tag.parentElement.parentElement.style.display = 'inline-block');
+}
+
 function removeNextNodes(nodes) {
     nodes.forEach((tag) => {
         tag.nextElementSibling.style.display = 'none';
@@ -38,6 +42,16 @@ function excludeArtist(artist) {
 function excludeArtists() {
     const { artists } = getData();
     removeNodes(artistTags.filter((tag) => artists.includes(tag.innerText)));
+}
+
+function returnArtist(artist) {
+    const { storageData, artists, storageKey } = getData();
+    const newData = {
+        ...storageData,
+        artists: artists.filter((prevArtist) => prevArtist !== artist)
+    };
+    localStorage.setItem(storageKey, JSON.stringify(newData));
+    returnNodes(artistTags.filter((tag) => tag.innerText === artist));
 }
 
 function excludeGenre(genre) {
@@ -88,7 +102,7 @@ function getClassName(node, i) {
     return node.children[0].innerText + i;
 }
 
-function setRemoveNodes(tags, isGenre) {
+function setRemoveNodes({ tags, isGenre }) {
     tags.forEach((tag, i) => {
         const node = isGenre ? tag : tag.parentElement;
         const className = getClassName(node, i);
@@ -101,11 +115,46 @@ function setRemoveNodes(tags, isGenre) {
     });
 }
 
+function renderArtistsList() {
+    const { artists } = getData();
+    const label = document.createElement('label');
+    const labelId = 'artist-select';
+    let selectDiv = document.getElementsByClassName(labelId)[0];
+    if (!selectDiv) {
+        selectDiv = document.createElement('div');
+        selectDiv.className = labelId;
+        showButton = document.createElement('select');
+        showButton.onchange = (e) => {
+            const artistName = e.target.value;
+            returnArtist(artistName);
+            renderArtistsList();
+        };
+        label.innerText = 'Select an artist to remove from the blocked list';
+        label.for = labelId;
+        label.style.marginRight = '5px';
+        showButton.id = labelId;
+        selectDiv.style.position = 'absolute';
+        selectDiv.style.right = 0;
+        selectDiv.style.top = 0;
+        document.querySelector('body').append(selectDiv);
+        selectDiv.append(label);
+        selectDiv.append(showButton);
+    }
+    artists.reverse().forEach(option => {
+        const artistNode = document.createElement('option');
+        artistNode.value = option;
+        artistNode.text = option;
+        artistNode.selected = false;
+        showButton.appendChild(artistNode);
+    })
+}
+
 function setData() {
-    setRemoveNodes(artistTags);
+    setRemoveNodes({ tags: artistTags, isGenre: false });
     excludeArtists();
-    setRemoveNodes(genreTags, true);
+    setRemoveNodes({ tags: genreTags, isGenre: true });
     excludeGenres();
 }
 
 setData();
+renderArtistsList();
