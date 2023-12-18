@@ -4,3 +4,5 @@
 * 4) click load unpacked extension and select the directory with the downloaded repository
 * 5) open the website: http://everynoise.com/new_releases_by_genre.cgi?region=US&date=&genre=global&hidedupes=on
 * 6) click the extension in browser to give the permission to access the website and reload the page
+ 
+     04 Dec 2023 Update: Every Noise At Once is officially dead: https://twitter.com/EveryNoise/status/1731690293391466897
